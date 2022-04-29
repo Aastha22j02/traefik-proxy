@@ -7,4 +7,3 @@ resource "harvester_ssh_key" "mysshkey" {
 }
 
 
-}
