@@ -11,7 +11,7 @@ resource "rancher2_cluster" "dev" {
   provider                  = rancher2.admin
   name                      = var.cluster_name
   description               = "${var.prefix} rancher2 rke cluster"
-  enable_cluster_monitoring = true
+  enable_cluster_monitoring = false
   rke_config {
     network {
       plugin = "canal"
