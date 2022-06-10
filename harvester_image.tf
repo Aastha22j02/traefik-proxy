@@ -1,5 +1,5 @@
-resource "harvester_image" "ubuntu20" {
-  name      = "ubuntu20"
+resource "harvester_image" "ubuntu2" {
+  name      = "ubuntu2"
   namespace = "hrt-main"
 
   display_name = "ubuntu20-x86_64"
