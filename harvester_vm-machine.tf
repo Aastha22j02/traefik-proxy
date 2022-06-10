@@ -1,7 +1,7 @@
 #Creating master-node1
 
 resource "harvester_virtualmachine" "rke-master1" {
-  depends_on = [harvester_image.ubuntu20]
+  depends_on = [harvester_image.ubuntu2]
   name            = "master1"
   description = "test raw image"
   namespace = "hrt-main"
@@ -37,7 +37,7 @@ resource "harvester_virtualmachine" "rke-master1" {
     bus        = "virtio"
     boot_order = 1
 
-    image       = "default/ubuntu20"
+    image       = "default/ubuntu2"
     auto_delete = true
   }
 
@@ -88,7 +88,7 @@ resource "harvester_virtualmachine" "rke-master2" {
     bus        = "virtio"
     boot_order = 1
 
-    image       = "default/ubuntu20"
+    image       = "default/ubuntu2"
     auto_delete = true
   }
 
@@ -137,7 +137,7 @@ resource "harvester_virtualmachine" "rke-master3" {
     bus        = "virtio"
     boot_order = 1
 
-    image       = "default/ubuntu20"
+    image       = "default/ubuntu2"
     auto_delete = true
   }
 
@@ -184,7 +184,7 @@ resource "harvester_virtualmachine" "rke-worker1" {
     bus        = "virtio"
     boot_order = 1
 
-    image       = "default/ubuntu20"
+    image       = "default/ubuntu2"
     auto_delete = true
   }
 
