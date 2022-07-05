@@ -17,9 +17,9 @@ resource "harvester_virtualmachine" "rke-master1" {
   hostname     = "master1"
   machine_type = "q35"
 
-  ssh_keys = [
-    harvester_ssh_key.mysshkey.name
-  ]
+ # ssh_keys = [
+  #  harvester_ssh_key.mysshkey.name
+ # ]
 
 
 
