@@ -1,15 +1,87 @@
-stages:
-    - install
+image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}
+  #change state name at the last of URL according to the environment...
+  TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/dev
+  
 
-install-traefik:
-    stage: install
-    tags:
-        - shell  
-    before_script:
-        - export KUBECONFIG=$KUBE_CONFIG
-    script:
-        - helm repo add traefik https://traefik.github.io/charts    
-        - helm repo update
-        - kubectl create ns traefik-v2
-        - helm install --namespace=traefik-v2 \traefik traefik/traefik
-        - kubectl port-forward $(kubectl get pods --selector "app.kubernetes.io/name=traefik" --output=name) -n traefik-v2 9000:9000 -n traefik-v2
+cache:
+  key: dev
+  paths:
+    - ${TF_ROOT}/.terraform
+
+before_script:
+  - cd ${TF_ROOT}
+
+
+stages:
+  - validate
+  - build
+  - deploy
+  - destroy
+
+####################
+# DEV environment
+####################  
+
+Dev:validate:
+  stage: validate
+  environment:
+    name: Dev
+
+  script:      
+    - gitlab-terraform init
+    - gitlab-terraform validate
+    
+  tags:
+    - "docker"
+    - "terraform"    
+
+Dev:plan:
+  stage: build
+  environment:
+    name: Dev
+  script:
+    - gitlab-terraform plan
+    - gitlab-terraform plan-json
+   
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
+    reports:
+      terraform: ${TF_ROOT}/plan.json
+  tags:
+    - "docker"
+    - "terraform"      
+
+# Separate apply job for manual launching Terraform as it can be destructive
+# action.
+Dev:apply:
+  stage: deploy
+  environment:
+    name: Dev
+  script:
+    - gitlab-terraform apply
+  dependencies:
+    - Dev:plan
+  when: manual
+  tags:
+    - "docker"
+    - "terraform"
+ 
+
+Dev:destroy:
+  stage: destroy
+  environment:
+    name: Dev
+  script:   
+    - gitlab-terraform destroy
+  dependencies:
+    - Dev:plan
+    - Dev:apply
+  when: manual
+ 
+  tags:
+    - "docker"
+    - "terraform"      
